@@ -25,11 +25,10 @@ def load_credentials() -> tuple[str, str]:
     """
     Load FB_EMAIL and FB_PASSWORD from config.env (or environment variables).
 
-    Raises:
-        ValueError: if either credential is missing after all sources are checked.
+    Returns ``("", "")`` if credentials are not found (allows cookie-only login).
 
     Returns:
-        (email, password) tuple.
+        (email, password) tuple — may be empty strings if not configured.
     """
     email    = os.environ.get("FB_EMAIL", "")
     password = os.environ.get("FB_PASSWORD", "")
@@ -50,12 +49,14 @@ def load_credentials() -> tuple[str, str]:
                     password = value
 
     if not email or not password:
-        raise ValueError(
-            "Facebook credentials not found!\n"
-            f"Create {CONFIG_ENV_PATH} with:\n"
-            "  FB_EMAIL=your@email.com\n"
-            "  FB_PASSWORD=yourpassword"
+        print(
+            f"[WARN] Facebook credentials not found (no config.env or missing values).\n"
+            f"       Cookie login will be attempted. If it fails, form login won't be possible.\n"
+            f"       To enable form login, create {CONFIG_ENV_PATH} with:\n"
+            f"         FB_EMAIL=your@email.com\n"
+            f"         FB_PASSWORD=yourpassword"
         )
+        return "", ""
 
     print(f"[INFO] Credentials loaded for: {email}")
     return email, password

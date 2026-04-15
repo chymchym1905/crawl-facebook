@@ -69,12 +69,8 @@ async def main() -> None:
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # Load credentials
-    try:
-        email, password = load_credentials()
-    except ValueError as e:
-        print(f"[ERROR] {e}")
-        return
+    # Load credentials (may be empty if no config.env — cookie login still works)
+    email, password = load_credentials()
 
     ensure_browser_profile()
 
@@ -89,12 +85,15 @@ async def main() -> None:
     async with async_playwright() as pw:
         context, page = await launch_browser_context(pw, headless=args.headless)
 
-        # ── Step 1: Login (cookies first, then form) ────────────────────────
+        # ── Step 1: Login (cookies first, then form fallback) ────────────────
         print("\n[STEP 1] Logging in...")
         login_ok = await try_cookie_login(context, page)
         if not login_ok:
-            print("[INFO] Cookie login failed or no cookies, falling back to form login...")
-            login_ok = await login_to_facebook(page, email, password)
+            if email and password:
+                print("[INFO] Cookie login failed, falling back to form login...")
+                login_ok = await login_to_facebook(page, email, password)
+            else:
+                print("[WARN] Cookie login failed and no credentials configured for form login.")
         if not login_ok:
             print("[ERROR] Login failed. Aborting.")
             await context.close()

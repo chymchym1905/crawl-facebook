@@ -11,7 +11,7 @@
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal",
-            "args": ["--post-url", "https://www.facebook.com/groups/950437708832783/permalink/2145086716034537/"]
+            // "args": ["--post-url", "https://www.facebook.com/groups/950437708832783/permalink/2145086716034537/"]
         }
     ]
 }
