@@ -1,0 +1,17 @@
+# Credentials and cookies (never commit)
+config.env
+www.facebook.com_cookies.json
+*_cookies.json
+
+# Browser profile data
+.browser_profile/
+.browser_profile_firefox/
+.browser_profile_webkit/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Output (optional — remove if you want to track results)
+output/
